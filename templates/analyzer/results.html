@@ -1,0 +1,295 @@
+{% extends 'base.html' %}
+
+{% block title %}Analysis Results{% endblock %}
+
+{% block extra_css %}
+<style>
+    .results-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .score-section {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 40px;
+        border-radius: 15px;
+        text-align: center;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .score-number {
+        font-size: 4rem;
+        font-weight: 800;
+        margin: 20px 0;
+    }
+
+    .score-label {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        margin-bottom: 20px;
+    }
+
+    .progress-bar-custom {
+        height: 12px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 20px 0;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: white;
+        transition: width 1s ease;
+        border-radius: 10px;
+    }
+
+    .recommendation-section {
+        background: #f0f9ff;
+        border-left: 4px solid var(--primary-color);
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+    }
+
+    .recommendation-section.success {
+        background: #f0fdf4;
+        border-left-color: var(--success-color);
+    }
+
+    .recommendation-section.info {
+        background: #f0f9ff;
+        border-left-color: #3b82f6;
+    }
+
+    .recommendation-section.warning {
+        background: #fffbeb;
+        border-left-color: var(--warning-color);
+    }
+
+    .recommendation-section.danger {
+        background: #fef2f2;
+        border-left-color: var(--danger-color);
+    }
+
+    .recommendation-title {
+        font-weight: 700;
+        margin-bottom: 10px;
+        font-size: 1.1rem;
+    }
+
+    .recommendation-section.success .recommendation-title {
+        color: var(--success-color);
+    }
+
+    .recommendation-section.info .recommendation-title {
+        color: #3b82f6;
+    }
+
+    .recommendation-section.warning .recommendation-title {
+        color: var(--warning-color);
+    }
+
+    .recommendation-section.danger .recommendation-title {
+        color: var(--danger-color);
+    }
+
+    .results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .result-card {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .result-card h3 {
+        color: var(--primary-color);
+        font-weight: 700;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .skills-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .skill-badge {
+        display: inline-block;
+        background: white;
+        border: 2px solid var(--primary-color);
+        color: var(--primary-color);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .skill-badge.matched {
+        background: #d1fae5;
+        border-color: var(--success-color);
+        color: #065f46;
+    }
+
+    .skill-badge.missing {
+        background: #fee2e2;
+        border-color: var(--danger-color);
+        color: #991b1b;
+    }
+
+    .empty-message {
+        text-align: center;
+        color: #999;
+        padding: 20px;
+        font-style: italic;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 30px;
+        flex-wrap: wrap;
+    }
+
+    .action-buttons .btn {
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+
+    .stats-box {
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(37, 99, 235, 0.05));
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 15px;
+    }
+
+    .stat-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-item:last-child {
+        border-bottom: none;
+    }
+
+    .stat-label {
+        font-weight: 600;
+        color: #555;
+    }
+
+    .stat-value {
+        color: var(--primary-color);
+        font-weight: 700;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="results-container">
+    <!-- Match Score Section -->
+    <div class="score-section">
+        <div class="score-label">Overall Match Score</div>
+        <div class="score-number">{{ analysis.match_score }}%</div>
+        <div class="progress-bar-custom">
+            <div class="progress-fill" style="width: {{ analysis.match_score }}%"></div>
+        </div>
+    </div>
+
+    <!-- Recommendation Section -->
+    <div class="recommendation-section {{ recommendation_class }}">
+        <div class="recommendation-title">💡 Recommendation</div>
+        <p>{{ recommendation }}</p>
+    </div>
+
+    <!-- Skills Analysis -->
+    <div class="results-grid">
+        <!-- Matched Skills -->
+        <div class="result-card">
+            <h3>✅ Matched Skills</h3>
+            {% if matched_skills %}
+                <div class="skills-list">
+                    {% for skill in matched_skills %}
+                        <span class="skill-badge matched">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+                <div class="stats-box">
+                    <div class="stat-item">
+                        <span class="stat-label">Skills Found:</span>
+                        <span class="stat-value">{{ matched_skills|length }}</span>
+                    </div>
+                </div>
+            {% else %}
+                <div class="empty-message">No matched skills found</div>
+            {% endif %}
+        </div>
+
+        <!-- Missing Skills -->
+        <div class="result-card">
+            <h3>⚠️ Missing Skills</h3>
+            {% if missing_skills %}
+                <div class="skills-list">
+                    {% for skill in missing_skills %}
+                        <span class="skill-badge missing">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+                <div class="stats-box">
+                    <div class="stat-item">
+                        <span class="stat-label">Skills Missing:</span>
+                        <span class="stat-value">{{ missing_skills|length }}</span>
+                    </div>
+                </div>
+            {% else %}
+                <div class="empty-message">All skills match! Perfect fit!</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Detailed Statistics -->
+    <div class="result-card">
+        <h3>📊 Detailed Statistics</h3>
+        <div class="stats-box">
+            <div class="stat-item">
+                <span class="stat-label">Total Job Requirements:</span>
+                <span class="stat-value">{{ matched_skills|length|add:missing_skills|length }}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Skills Matched:</span>
+                <span class="stat-value">{{ matched_skills|length }}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Skills Missing:</span>
+                <span class="stat-value">{{ missing_skills|length }}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Match Percentage:</span>
+                <span class="stat-value">{{ analysis.match_score }}%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <a href="{% url 'analyze' %}" class="btn btn-primary">
+            🔄 Analyze Another Resume
+        </a>
+        <a href="{% url 'index' %}" class="btn btn-outline-primary">
+            🏠 Back to Home
+        </a>
+    </div>
+</div>
+{% endblock %}

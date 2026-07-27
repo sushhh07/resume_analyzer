@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+
+{% block title %}Analyze Resume{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-section {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    .help-text {
+        font-size: 0.85rem;
+        color: #666;
+        margin-top: 5px;
+        display: block;
+    }
+
+    .file-upload-wrapper {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+    }
+
+    .file-input-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        border: 2px dashed var(--primary-color);
+        border-radius: 8px;
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(37, 99, 235, 0.1));
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .file-input-label:hover {
+        border-color: var(--secondary-color);
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(37, 99, 235, 0.15));
+    }
+
+    .file-input-label i {
+        font-size: 2rem;
+        margin-right: 15px;
+        color: var(--primary-color);
+    }
+
+    .file-input-text {
+        text-align: left;
+    }
+
+    .file-input-text h5 {
+        margin: 0;
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+
+    .file-input-text p {
+        margin: 5px 0 0 0;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    .textarea-wrapper {
+        position: relative;
+    }
+
+    textarea.form-control {
+        min-height: 200px;
+        resize: vertical;
+        font-family: 'Courier New', monospace;
+    }
+
+    .char-count {
+        font-size: 0.85rem;
+        color: #999;
+        margin-top: 5px;
+        text-align: right;
+    }
+
+    .submit-section {
+        display: flex;
+        gap: 10px;
+        margin-top: 30px;
+        justify-content: center;
+    }
+
+    .error-message {
+        color: var(--danger-color);
+        font-size: 0.9rem;
+        margin-top: 5px;
+    }
+
+    .info-box {
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(37, 99, 235, 0.05));
+        border-left: 4px solid var(--primary-color);
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+    }
+
+    .info-box h5 {
+        color: var(--primary-color);
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+
+    .info-box p {
+        margin: 0;
+        font-size: 0.95rem;
+        color: #555;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-section">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title mb-0">Analyze Your Resume</h2>
+        </div>
+        <div class="card-body p-5">
+            <div class="info-box">
+                <h5>📋 How to Use</h5>
+                <p>1. Upload your resume in PDF format<br>
+                   2. Paste the job description<br>
+                   3. Click "Analyze" to get your match score</p>
+            </div>
+
+            <form method="post" enctype="multipart/form-data" id="analysisForm">
+                {% csrf_token %}
+
+                <!-- Resume File Upload -->
+                <div class="form-group">
+                    <label class="form-label">{{ form.resume_file.label }}</label>
+                    
+                    <div class="file-upload-wrapper">
+                        <label for="id_resume_file" class="file-input-label">
+                            <div>
+                                <div style="font-size: 2rem; margin-bottom: 10px;">📁</div>
+                                <div class="file-input-text">
+                                    <h5>Click to upload or drag and drop</h5>
+                                    <p>PDF files only (Max 10MB)</p>
+                                </div>
+                            </div>
+                        </label>
+                        {{ form.resume_file }}
+                    </div>
+                    
+                    {% if form.resume_file.errors %}
+                        <div class="error-message">{{ form.resume_file.errors.0 }}</div>
+                    {% endif %}
+                    <small class="help-text">{{ form.resume_file.help_text }}</small>
+                </div>
+
+                <!-- Job Description -->
+                <div class="form-group">
+                    <label class="form-label">{{ form.job_description.label }}</label>
+                    
+                    <div class="textarea-wrapper">
+                        {{ form.job_description }}
+                    </div>
+                    
+                    {% if form.job_description.errors %}
+                        <div class="error-message">{{ form.job_description.errors.0 }}</div>
+                    {% endif %}
+                    <div class="char-count">
+                        <span id="charCount">0</span> characters
+                    </div>
+                    <small class="help-text">{{ form.job_description.help_text }}</small>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="submit-section">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        ⚡ Analyze Resume
+                    </button>
+                    <a href="{% url 'index' %}" class="btn btn-outline-secondary btn-lg">
+                        ← Back
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Character counter for job description
+    document.getElementById('id_job_description').addEventListener('input', function() {
+        document.getElementById('charCount').textContent = this.value.length;
+    });
+
+    // Drag and drop for file upload
+    const fileInput = document.getElementById('id_resume_file');
+    const fileLabel = document.querySelector('.file-input-label');
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        fileLabel.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        fileLabel.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        fileLabel.addEventListener(eventName, unhighlight, false);
+    });
+
+    function highlight(e) {
+        fileLabel.style.borderColor = 'var(--secondary-color)';
+        fileLabel.style.backgroundColor = 'rgba(37, 99, 235, 0.15)';
+    }
+
+    function unhighlight(e) {
+        fileLabel.style.borderColor = 'var(--primary-color)';
+        fileLabel.style.backgroundColor = 'rgba(37, 99, 235, 0.1)';
+    }
+
+    fileLabel.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        fileInput.files = files;
+    }
+</script>
+{% endblock %}
