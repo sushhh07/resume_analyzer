@@ -34,8 +34,11 @@ def analyze(request):
     """
     if request.method == 'POST':
         form = ResumeAnalysisForm(request.POST, request.FILES)
-        
+        print("POST:", request.POST)
+        print("FILES:", request.FILES)
+
         if form.is_valid():
+            print("Form is valid")
             try:
                 # Get form data
                 resume_file = request.FILES['resume_file']
