@@ -12,7 +12,7 @@ from django.contrib import messages
 from .forms import ResumeAnalysisForm
 from .models import ResumeAnalysis
 from .ml_utils import ResumeAnalyzer
-import os
+
 
 
 def index(request):
@@ -42,6 +42,7 @@ def analyze(request):
             try:
                 # Get form data
                 resume_file = request.FILES['resume_file']
+                print("Resume File:", resume_file)
                 job_description = form.cleaned_data['job_description']
                 
                 # Initialize analyzer
@@ -50,6 +51,21 @@ def analyze(request):
                 # Analyze resume
                 analysis_results = analyzer.analyze_resume(resume_file, job_description)
                 
+
+                print("Resume Text:")
+                print(analysis_results['resume_text'])
+
+                print("Job Description:")
+                print(job_description)
+
+                print("Match Score:")
+                print(analysis_results['match_score'])
+
+                print("Matched Skills:")
+                print(analysis_results['matched_skills'])
+
+                print("Missing Skills:")
+                print(analysis_results['missing_skills'])
                 # Save to database
                 analysis = ResumeAnalysis.objects.create(
                     resume_file=resume_file,
@@ -87,7 +103,7 @@ def results(request, pk):
         # Get skills lists
         matched_skills = analysis.get_matched_skills_list()
         missing_skills = analysis.get_missing_skills_list()
-        
+        total_skills = len(matched_skills) + len(missing_skills)
         # Determine recommendation
         match_score = analysis.match_score
         if match_score >= 80:
@@ -107,6 +123,7 @@ def results(request, pk):
             'analysis': analysis,
             'matched_skills': matched_skills,
             'missing_skills': missing_skills,
+            'total_skills': total_skills,
             'recommendation': recommendation,
             'recommendation_class': recommendation_class,
             'title': 'Analysis Results'

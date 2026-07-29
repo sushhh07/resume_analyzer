@@ -210,6 +210,17 @@
     // Drag and drop for file upload
     const fileInput = document.getElementById('id_resume_file');
     const fileLabel = document.querySelector('.file-input-label');
+    fileInput.addEventListener("change", function () {
+
+      if (this.files.length > 0) {
+
+        document.querySelector(".file-input-text h5").textContent = this.files[0].name;
+
+        document.querySelector(".file-input-text p").textContent = "File selected successfully ✔";
+
+      }
+
+    });
 
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         fileLabel.addEventListener(eventName, preventDefaults, false);

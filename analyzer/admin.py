@@ -1,4 +1,4 @@
-0p"""
+""""
 Django admin configuration for the analyzer app.
 Allows managing ResumeAnalysis records from Django admin panel.
 """
