@@ -119,3 +119,4 @@ ALLOWED_UPLOAD_EXTENSIONS = ['pdf']
 MAX_FEATURES = 500  # Maximum number of features for TF-IDF vectorizer
 MIN_DF = 1  # Minimum document frequency
 MAX_DF = 0.95  # Maximum document frequency
+LOGIN_URL = 'login'

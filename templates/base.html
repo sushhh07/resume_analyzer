@@ -5,130 +5,158 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Resume Analyzer{% endblock %}</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #2563eb;
-            --secondary-color: #1e40af;
-            --success-color: #16a34a;
-            --danger-color: #dc2626;
-            --warning-color: #ea580c;
-        }
+   <style> 
+:root {
+    --primary-color: #8B7EC8;
+    --secondary-color: #6F62AC;
+    --success-color: #198754;
+    --danger-color: #dc3545;
+    --warning-color: #e0a800;
+    --light-bg: #FAF9FC;
+    --light-purple: #E9E4F5;
+    --dark-color: #343044;
+}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--light-bg);
+    color: var(--dark-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
 
-        navbar {
-            background: rgba(0, 0, 0, 0.8) !important;
-            backdrop-filter: blur(10px);
-            border-bottom: 2px solid var(--primary-color);
-        }
+/* Navbar */
+.navbar {
+    background: #343044 !important;
+    padding: 14px 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
 
-        .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-color) !important;
-        }
+.navbar-brand {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #343044 !important;
 
-        .container-main {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 20px;
-        }
+}
 
-        .card {
-            background: white;
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-        }
+.navbar .nav-link {
+    color: #E9E4F5 !important;
+    margin-left: 12px;
+    transition: 0.3s;
+}
 
-        .card-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border-radius: 15px 15px 0 0 !important;
-            border: none;
-        }
+.navbar .nav-link:hover {
+    color: #B8A9E8 !important;
+}
 
-        .btn-primary {
-            background-color: var(--primary-color);
-            border: none;
-            border-radius: 8px;
-            padding: 10px 25px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
+/* Main Content */
+.container-main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
 
-        .btn-primary:hover {
-            background-color: var(--secondary-color);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
-        }
+/* Cards */
+.card {
+    background: #FFFFFF;
+    border: 1px solid #E9E4F5;
+    border-radius: 12px;
+    box-shadow: 0 5px 18px rgba(52,48,68,0.07);
+}
 
-        .btn-success {
-            background-color: var(--success-color);
-            border: none;
-        }
+.card-header {
+    background: var(--light-purple);
+    color: var(--dark-color);
+    border-radius: 12px 12px 0 0 !important;
+    border: none;
+    font-weight: 600;
+}
 
-        .btn-success:hover {
-            background-color: #15803d;
-        }
+/* Buttons */
+.btn-primary {
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: 7px;
+    padding: 10px 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
 
-        .form-control, .form-select {
-            border-radius: 8px;
-            border: 2px solid #e5e7eb;
-            padding: 10px 15px;
-            transition: all 0.3s ease;
-        }
+.btn-primary:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(139,126,200,0.25);
+}
 
-        .form-control:focus, .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
+.btn-success {
+    background-color: var(--success-color);
+    border: none;
+    border-radius: 7px;
+}
 
-        .alert {
-            border-radius: 8px;
-            border: none;
-            margin-bottom: 20px;
-        }
+.btn-success:hover {
+    background-color: #157347;
+}
 
-        .alert-danger {
-            background-color: #fee2e2;
-            color: #991b1b;
-        }
+/* Form Fields */
+.form-control, .form-select {
+    border-radius: 7px;
+    border: 1px solid #D8D2E8;
+    padding: 10px 15px;
+}
 
-        .alert-success {
-            background-color: #dcfce7;
-            color: #166534;
-        }
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(139,126,200,0.12);
+}
 
-        footer {
-            background: rgba(0, 0, 0, 0.9);
-            color: #888;
-            text-align: center;
-            padding: 20px;
-            margin-top: auto;
-        }
+/* Alerts */
+.alert {
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 20px;
+}
 
-        .badge {
-            border-radius: 20px;
-            padding: 8px 15px;
-            font-size: 0.9rem;
-        }
-    </style>
+.alert-danger {
+    background-color: #FCE8EA;
+    color: #842029;
+}
+
+.alert-success {
+    background-color: #E5F4EA;
+    color: #146C43;
+}
+
+/* Footer */
+footer {
+    background: #343044;
+    color: #E9E4F5;
+    text-align: center;
+    padding: 18px;
+    margin-top: auto;
+}
+
+footer p {
+    margin-bottom: 0;
+    font-size: 14px;
+}
+
+/* Badges */
+.badge {
+    border-radius: 20px;
+    padding: 8px 15px;
+    font-size: 0.9rem;
+}
+</style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -141,13 +169,44 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'index' %}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'analyze' %}">Analyze</a>
-                    </li>
-                </ul>
+
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'index' %}">Home</a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'analyze' %}">Analyze</a>
+    </li>
+
+    {% if user.is_authenticated %}
+
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'analysis_history' %}">
+                My History
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <span class="nav-link">Hello, {{ user.username }}</span>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+        </li>
+
+    {% else %}
+
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'login' %}">Login</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
+        </li>
+
+    {% endif %}
+
+</ul>
             </div>
         </div>
     </nav>

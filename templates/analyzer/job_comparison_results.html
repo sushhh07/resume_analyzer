@@ -1,0 +1,71 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Job Role Comparison Results</h2>
+
+    {% if comparison_results %}
+
+        {% for result in comparison_results %}
+        <div class="card shadow p-4 mb-4">
+
+            <h4>{{ result.role }}</h4>
+            <p class="text-muted">{{ result.description }}</p>
+
+            <h5 class="mt-3">
+                Match Score: {{ result.match_score }}%
+            </h5>
+
+            <div class="progress mb-3" style="height: 20px;">
+                <div class="progress-bar"
+                     role="progressbar"
+                     style="width: {{ result.match_score }}%;"
+                     aria-valuenow="{{ result.match_score }}"
+                     aria-valuemin="0"
+                     aria-valuemax="100">
+                    {{ result.match_score }}%
+                </div>
+            </div>
+
+            <h6 class="text-success">Matched Skills</h6>
+            {% if result.matched_skills %}
+                {% for skill in result.matched_skills %}
+                    <span class="badge bg-success me-1 mb-2">
+                        {{ skill }}
+                    </span>
+                {% endfor %}
+            {% else %}
+                <p>No matched skills found.</p>
+            {% endif %}
+
+            <h6 class="text-danger mt-3">Missing Skills</h6>
+            {% if result.missing_skills %}
+                {% for skill in result.missing_skills %}
+                    <span class="badge bg-danger me-1 mb-2">
+                        {{ skill }}
+                    </span>
+                {% endfor %}
+            {% else %}
+                <p>No missing skills. Great job!</p>
+            {% endif %}
+
+        </div>
+        {% endfor %}
+
+    {% else %}
+        <p class="text-center">No comparison results available.</p>
+    {% endif %}
+
+    <div class="text-center mt-4 mb-5">
+        <a href="{% url 'compare_roles' %}" class="btn btn-primary">
+            Compare Again
+        </a>
+        <a href="{% url 'index' %}" class="btn btn-secondary">
+            Go Home
+        </a>
+    </div>
+</div>
+
+{% endblock %}

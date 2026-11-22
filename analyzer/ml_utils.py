@@ -20,7 +20,7 @@ import fitz
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-
+from .skill_categories import SKILL_CATEGORIES
 
 class ResumeAnalyzer:
 
@@ -46,7 +46,8 @@ class ResumeAnalyzer:
             "machine learning",
             "tensorflow",
             "numpy",
-            "pandas"
+            "pandas",
+            "excel"
         ]
 
         self.vectorizer = TfidfVectorizer(
@@ -80,17 +81,56 @@ class ResumeAnalyzer:
 
         return text
     
+    
+
     def extract_skills(self, text):
 
-        text = self.preprocess_text(text)
+        text = re.sub(r'\s+', ' ', text.lower())
 
         found_skills = []
 
-        for skill in self.skills:
-            if skill.lower() in text:
-               found_skills.append(skill)
+        skills_sorted = sorted(
+            self.skills,
+            key=len,
+            reverse=True
+        )
+
+        for skill in skills_sorted:
+
+            skill_pattern = re.escape(skill.lower())
+
+            if skill.lower() == "c":
+                skill_pattern = r'c(?![+#])'
+
+            pattern = (
+                r'(?<![a-z0-9])'
+                + skill_pattern
+                + r'(?![a-z0-9])'
+            )
+
+            if re.search(pattern, text):
+                found_skills.append(skill)
 
         return found_skills
+    
+    def categorize_skills(self, skills):
+
+        categorized = {}
+
+        for category, category_skills in SKILL_CATEGORIES.items():
+
+            matched = [
+                skill for skill in skills
+                if skill in category_skills
+            ]
+
+            if matched:
+                categorized[category] = matched
+
+        return categorized
+
+
+
     
     def calculate_match_score(self, resume_text, job_description):
 
@@ -109,6 +149,8 @@ class ResumeAnalyzer:
 
         matched_skills = list(resume_skills.intersection(job_skills))
         missing_skills = list(job_skills - resume_skills)
+        matched_categories = self.categorize_skills(matched_skills)
+        missing_categories = self.categorize_skills(missing_skills)
 
         if len(job_skills) > 0:
            match_score = round((len(matched_skills) / len(job_skills)) * 100, 2)
@@ -123,7 +165,9 @@ class ResumeAnalyzer:
         return {
            "match_score": match_score,
            "matched_skills": matched_skills,
-           "missing_skills": missing_skills
+           "missing_skills": missing_skills,
+           "matched_categories": matched_categories,
+           "missing_categories": missing_categories
         }
     def analyze_resume(self, pdf_file, job_description):
           """

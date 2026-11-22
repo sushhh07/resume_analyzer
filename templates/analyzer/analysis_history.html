@@ -1,0 +1,58 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <h2 class="text-center mb-4">Analysis History</h2>
+
+    {% if analyses %}
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+
+            <thead class="table-dark">
+                <tr>
+                    <th>Date</th>
+                    <th>Job Description</th>
+                    <th>Match Score</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for analysis in analyses %}
+                <tr>
+                    <td>{{ analysis.created_at|date:"d M Y, h:i A" }}</td>
+
+                    <td>
+                        {{ analysis.job_description|truncatewords:15 }}
+                    </td>
+
+                    <td>{{ analysis.match_score }}%</td>
+
+                    <td>
+                        <a href="{% url 'results' analysis.pk %}"
+                           class="btn btn-primary btn-sm">
+                            View Results
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+
+    {% else %}
+
+    <div class="alert alert-info text-center">
+        No analysis history available yet.
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

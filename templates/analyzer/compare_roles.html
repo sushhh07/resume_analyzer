@@ -1,0 +1,51 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="card shadow p-4">
+        <h2 class="text-center mb-3">Job Role Suitability Comparison</h2>
+
+        <p class="text-center text-muted">
+            Upload your resume and find out which job roles match your skills.
+        </p>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="mb-4">
+                <label class="form-label fw-bold">Upload Resume (PDF)</label>
+                <input type="file" name="resume_file"
+                       class="form-control" accept=".pdf" required>
+            </div>
+
+            <h5 class="mb-3">Select Job Roles</h5>
+
+            {% for role, details in job_roles.items %}
+                <div class="form-check mb-2">
+                    <input class="form-check-input"
+                           type="checkbox"
+                           name="job_roles"
+                           value="{{ role }}"
+                           id="role{{ forloop.counter }}">
+
+                    <label class="form-check-label"
+                           for="role{{ forloop.counter }}">
+                        <strong>{{ role }}</strong>
+                        <br>
+                        <small class="text-muted">
+                            {{ details.description }}
+                        </small>
+                    </label>
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary w-100 mt-4">
+                Compare Job Roles
+            </button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

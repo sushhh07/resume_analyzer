@@ -14,7 +14,7 @@ Models:
     - created_at: Timestamp of analysis
     - updated_at: Last update timestamp
 """
-
+from django.conf import settings
 from django.db import models
 import os
 
@@ -30,6 +30,13 @@ class ResumeAnalysis(models.Model):
         upload_to='resumes/',
         help_text='Uploaded resume PDF file'
     )
+    user = models.ForeignKey(
+    settings.AUTH_USER_MODEL,
+    on_delete=models.CASCADE,
+    null=True,
+    blank=True,
+    related_name='resume_analyses'
+)
     
     # Store extracted text from resume
     resume_text = models.TextField(
